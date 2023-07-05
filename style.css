@@ -29,3 +29,45 @@ body {
     font-size: 80px;
     cursor: pointer;
 }
+
+.blur {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: black;
+    opacity: 40%;
+}
+
+.dialog {
+    border: solid 3px black;
+    border-radius: 30px;
+    background-color: rgb(255, 255, 255);
+    position: absolute;
+    width: clamp(400px, 40%, 500px);
+    height: clamp(400px, 40%, 500px);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 100px;
+    top: 30%;
+}
+
+.dialog__text {
+    font-size: 100px;
+}
+
+.dialog__button {
+    border: solid 3px black;
+    font-size: 80px;
+    border-radius: 30px;
+    cursor: pointer;
+}
+
+.dialog__button:hover {
+    background-color: #a52a2a;
+}
+
+.dialog__button:focus {
+    background-color: rgb(128, 26, 26);
+}

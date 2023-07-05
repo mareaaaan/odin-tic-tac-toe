@@ -1,3 +1,10 @@
+const Player = (name, symbol) => {
+	return {
+		name,
+		symbol,
+	};
+};
+
 var Gameboard = (() => {
 	var gameboard = ["", "", "", "", "", "", "", "", ""];
 
@@ -83,14 +90,14 @@ var Gameboard = (() => {
 
 	_render();
 
-	return { placeSymbolAt, setCurrentSymbol, getWinner, reset };
+	return { setCurrentSymbol, getWinner, reset };
 })();
 
 var GameController = (() => {
 	let players = [];
 	let turnNumber = 0;
 
-	function registerPlayer(name, symbol) {
+	function _registerPlayer(name, symbol) {
 		players.push(Player(name, symbol));
 	}
 
@@ -98,23 +105,22 @@ var GameController = (() => {
 		return turnNumber % 2;
 	}
 
-	function _reset() {
+	function reset() {
 		players = [];
 		turnNumber = 0;
-		init();
+		_init();
 	}
 
-	function init() {
-		registerPlayer("Player One", "X");
-		registerPlayer("Player Two", "O");
+	function _init() {
+		_registerPlayer("Player One", "X");
+		_registerPlayer("Player Two", "O");
 		Gameboard.setCurrentSymbol(players[_getCurrentPlayerIndex()].symbol);
 	}
 
 	function playTurn() {
 		let winner = Gameboard.getWinner();
 		if (winner != false) {
-			Gameboard.reset();
-			_reset();
+			DisplayController.showPlayAgainDialog(winner);
 		} else {
 			turnNumber++;
 			Gameboard.setCurrentSymbol(
@@ -123,14 +129,48 @@ var GameController = (() => {
 		}
 	}
 
-	return { init, playTurn };
+	_init();
+
+	return { playTurn, reset };
 })();
 
-const Player = (name, symbol) => {
-	return {
-		name,
-		symbol,
-	};
-};
+var DisplayController = (() => {
+	const body = document.body;
+	const dialogText = document.getElementsByClassName("dialog__text")[0];
+	const dialogButton = document.getElementsByClassName("dialog__button")[0];
+	const dialog = document.getElementsByClassName("dialog")[0];
+	const layer = document.getElementsByClassName("layer")[0];
 
-GameController.init();
+	function _blurBody() {
+		layer.classList.add("blur");
+	}
+
+	function _unBlurBody() {
+		layer.classList.remove("blur");
+	}
+
+	function _hidePlayAgainDialog() {
+		_unBlurBody();
+		dialog.remove();
+	}
+
+	function showPlayAgainDialog(winner) {
+		_blurBody();
+		body.appendChild(dialog);
+		dialogText.textContent = winner + " won!";
+	}
+
+	function _playAgain() {
+		Gameboard.reset();
+		GameController.reset();
+	}
+
+	dialogButton.addEventListener("click", function () {
+		_playAgain();
+		_hidePlayAgainDialog();
+	});
+
+	_hidePlayAgainDialog();
+
+	return { showPlayAgainDialog };
+})();
