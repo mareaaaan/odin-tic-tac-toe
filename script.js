@@ -10,6 +10,13 @@ var Gameboard = (() => {
 		}
 	}
 
+	function reset() {
+		for (let i = 0; i < gameboard.length; i++) {
+			gameboard = ["", "", "", "", "", "", "", "", ""];
+		}
+		_render();
+	}
+
 	function placeSymbolAt(index, symbol) {
 		if (gameboard[index] == "") {
 			gameboard[index] = symbol;
@@ -32,15 +39,45 @@ var Gameboard = (() => {
 				"click",
 				function () {
 					placeSymbolAt(i, symbol);
+					GameController.playTurn();
 				},
 				{ once: true }
 			);
 		}
 	}
 
+	function getWinner() {
+		let rows = [
+			[false, false, false],
+			[false, false, false],
+			[false, false, false],
+		];
+
+		let columns = [
+			[false, false, false],
+			[false, false, false],
+			[false, false, false],
+		];
+
+		for (let i = 0; i < 9; i++) {
+			rows[Math.floor(i / 3)][i % 3] = gameboard[i];
+			columns[i % 3][Math.floor(i / 3)] = gameboard[i];
+		}
+
+		for (let i = 0; i < 3; i++) {
+			if(rows[i][0] != false && rows[i].every( (val, i, arr) => val === arr[0])) {
+				return rows[i][0];
+			}
+			if(columns[i][0] != false && columns[i].every( (val, i, arr) => val === arr[0] )) {
+				return columns[i][0];
+			}
+		}
+		return false;
+	}
+
 	_render();
 
-	return { placeSymbolAt, setCurrentSymbol };
+	return { placeSymbolAt, setCurrentSymbol, getWinner, reset };
 })();
 
 var GameController = (() => {
@@ -57,23 +94,36 @@ var GameController = (() => {
 		return turnNumber % 2;
 	}
 
+	function _reset() {
+		players = [];
+		playerScores = [];
+		turnNumber = 0;
+		play();
+	}
+
 	function _initGame() {
 		registerPlayer("Player One", "X");
 		registerPlayer("Player Two", "O");
 	}
 
-	function _isGameFinished() {
-		return;
+	function playTurn() {
+		let winner = Gameboard.getWinner();
+		if (winner != false) {
+			_reset();
+			Gameboard.reset();
+		} else {
+			turnNumber++;
+			Gameboard.setCurrentSymbol(
+				players[_getCurrentPlayerIndex()].symbol
+			);
+		}
 	}
 
 	function play() {
 		_initGame();
 		Gameboard.setCurrentSymbol(players[_getCurrentPlayerIndex()].symbol);
-		turnNumber++;
-		// while (!_isGameFinished()) {
-		// }
 	}
-	return { play };
+	return { play, playTurn };
 })();
 
 const Player = (name, symbol) => {
