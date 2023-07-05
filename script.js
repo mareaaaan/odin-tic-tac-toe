@@ -65,10 +65,16 @@ var Gameboard = (() => {
 		}
 
 		for (let i = 0; i < 3; i++) {
-			if(rows[i][0] != false && rows[i].every( (val, i, arr) => val === arr[0])) {
+			if (
+				rows[i][0] != false &&
+				rows[i].every((val, i, arr) => val === arr[0])
+			) {
 				return rows[i][0];
 			}
-			if(columns[i][0] != false && columns[i].every( (val, i, arr) => val === arr[0] )) {
+			if (
+				columns[i][0] != false &&
+				columns[i].every((val, i, arr) => val === arr[0])
+			) {
 				return columns[i][0];
 			}
 		}
@@ -82,12 +88,10 @@ var Gameboard = (() => {
 
 var GameController = (() => {
 	let players = [];
-	let playerScores = [];
 	let turnNumber = 0;
 
 	function registerPlayer(name, symbol) {
 		players.push(Player(name, symbol));
-		playerScores.push(0);
 	}
 
 	function _getCurrentPlayerIndex() {
@@ -96,21 +100,21 @@ var GameController = (() => {
 
 	function _reset() {
 		players = [];
-		playerScores = [];
 		turnNumber = 0;
-		play();
+		init();
 	}
 
-	function _initGame() {
+	function init() {
 		registerPlayer("Player One", "X");
 		registerPlayer("Player Two", "O");
+		Gameboard.setCurrentSymbol(players[_getCurrentPlayerIndex()].symbol);
 	}
 
 	function playTurn() {
 		let winner = Gameboard.getWinner();
 		if (winner != false) {
-			_reset();
 			Gameboard.reset();
+			_reset();
 		} else {
 			turnNumber++;
 			Gameboard.setCurrentSymbol(
@@ -119,11 +123,7 @@ var GameController = (() => {
 		}
 	}
 
-	function play() {
-		_initGame();
-		Gameboard.setCurrentSymbol(players[_getCurrentPlayerIndex()].symbol);
-	}
-	return { play, playTurn };
+	return { init, playTurn };
 })();
 
 const Player = (name, symbol) => {
@@ -133,4 +133,4 @@ const Player = (name, symbol) => {
 	};
 };
 
-GameController.play();
+GameController.init();
