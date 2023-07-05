@@ -11,11 +11,21 @@ var Gameboard = (() => {
 	}
 
 	function placeSymbolAt(index, symbol) {
-		gameboard[index] = symbol;
-		_render();
+		if (gameboard[index] == "") {
+			gameboard[index] = symbol;
+			_render();
+		}
+	}
+
+	function _removeCurrentSymbol() {
+		for (let i = 0; i < gameboardCells.length; i++) {
+			gameboardCell = gameboardCells[i];
+			gameboardCell.replaceWith(gameboardCell.cloneNode(true));
+		}
 	}
 
 	function setCurrentSymbol(symbol) {
+		_removeCurrentSymbol();
 		for (let i = 0; i < gameboardCells.length; i++) {
 			gameboardCell = gameboardCells[i];
 			gameboardCell.addEventListener(
@@ -23,7 +33,7 @@ var Gameboard = (() => {
 				function () {
 					placeSymbolAt(i, symbol);
 				},
-				true
+				{ once: true }
 			);
 		}
 	}
@@ -56,14 +66,14 @@ var GameController = (() => {
 		return;
 	}
 
-	function playRound() {
+	function play() {
 		_initGame();
 		Gameboard.setCurrentSymbol(players[_getCurrentPlayerIndex()].symbol);
 		turnNumber++;
 		// while (!_isGameFinished()) {
 		// }
 	}
-	return { playRound };
+	return { play };
 })();
 
 const Player = (name, symbol) => {
@@ -73,4 +83,4 @@ const Player = (name, symbol) => {
 	};
 };
 
-GameController.playRound();
+GameController.play();
