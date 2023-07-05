@@ -31,6 +31,10 @@ var Gameboard = (() => {
 		}
 	}
 
+	function isFull() {
+		return gameboard.indexOf("") >= 0 ? false : true;
+	}
+
 	function _removeCurrentSymbol() {
 		for (let i = 0; i < gameboardCells.length; i++) {
 			gameboardCell = gameboardCells[i];
@@ -86,11 +90,19 @@ var Gameboard = (() => {
 			}
 		}
 
-		if(gameboard[0] != false && gameboard[0] == gameboard[4] && gameboard[4] == gameboard[8] ){
+		if (
+			gameboard[0] != false &&
+			gameboard[0] == gameboard[4] &&
+			gameboard[4] == gameboard[8]
+		) {
 			return gameboard[0];
 		}
 
-		if(gameboard[2] != false && gameboard[2] == gameboard[4] && gameboard[4] == gameboard[6] ){
+		if (
+			gameboard[2] != false &&
+			gameboard[2] == gameboard[4] &&
+			gameboard[4] == gameboard[6]
+		) {
 			return gameboard[2];
 		}
 
@@ -99,7 +111,7 @@ var Gameboard = (() => {
 
 	_render();
 
-	return { setCurrentSymbol, getWinner, reset };
+	return { setCurrentSymbol, getWinner, reset, isFull };
 })();
 
 var GameController = (() => {
@@ -130,6 +142,8 @@ var GameController = (() => {
 		let winner = Gameboard.getWinner();
 		if (winner != false) {
 			DisplayController.showPlayAgainDialog(winner);
+		} else if (Gameboard.isFull()) {
+			DisplayController.showPlayAgainDialog(undefined);
 		} else {
 			turnNumber++;
 			Gameboard.setCurrentSymbol(
@@ -166,7 +180,7 @@ var DisplayController = (() => {
 	function showPlayAgainDialog(winner) {
 		_blurBody();
 		body.appendChild(dialog);
-		dialogText.textContent = winner + " won!";
+		dialogText.textContent = winner ? winner + " won!" : "Tie!";
 	}
 
 	function _playAgain() {
