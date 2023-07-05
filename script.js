@@ -85,6 +85,15 @@ var Gameboard = (() => {
 				return columns[i][0];
 			}
 		}
+
+		if(gameboard[0] != false && gameboard[0] == gameboard[4] && gameboard[4] == gameboard[8] ){
+			return gameboard[0];
+		}
+
+		if(gameboard[2] != false && gameboard[2] == gameboard[4] && gameboard[4] == gameboard[6] ){
+			return gameboard[2];
+		}
+
 		return false;
 	}
 
